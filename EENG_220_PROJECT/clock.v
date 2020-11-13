@@ -73,8 +73,6 @@ module clock(CLK, P, STOP, SWITCH, SW_IN, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_M
 		end
 	end
 	
-<<<<<<< HEAD
-=======
 	assign Q_HOUR_ONE = HOUR[3:0];
 	assign Q_HOUR_TEN = HOUR[7:4];
 	assign Q_MIN_ONE = MIN[3:0];
@@ -82,5 +80,4 @@ module clock(CLK, P, STOP, SWITCH, SW_IN, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_M
 	assign Q_SEC_ONE = SEC[3:0];
 	assign Q_SEC_TEN = SEC[7:4];
 	
->>>>>>> main
 endmodule 
