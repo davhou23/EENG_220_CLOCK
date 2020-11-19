@@ -1,0 +1,21 @@
+set_location_assignment PIN_P11 -to MAX10_CLK1_50
+set_location_assignment PIN_N5 -to ADC_CLK_10
+
+
+
+
+
+For Derek And David’s Project
+set_location_assignment PIN_V10 -to DisplayGround[0]
+set_location_assignment PIN_W10 -to DisplayGround[1]
+set_location_assignment PIN_V9 -to DisplayGround[2]
+set_location_assignment PIN_W9 -to DisplayGround[3]
+set_location_assignment PIN_V8 -to DisplayGround[4]
+
+set_location_assignment PIN_W8 -to inputDisplay[0]
+set_location_assignment PIN_V7 -to inputDisplay[1]
+set_location_assignment PIN_W7 -to inputDisplay[2]
+set_location_assignment PIN_W6 -to inputDisplay[3]
+set_location_assignment PIN_V5 -to inputDisplay[4]
+set_location_assignment PIN_W5 -to inputDisplay[5]
+set_location_assignment PIN_AA15 -to inputDisplay[6]
