@@ -1,11 +1,11 @@
 // This is a module to display on a 
-module Display (ADC_CLK_10, SW, minones, mintens, hourone, hourten, DisplayGround, inputDisplay);
-	input [3:0] minones, mintens, hourone, hourten; // a four bit input from the clocks.
+module Display (ADC_CLK_10, SW, m1, m10, h1, h10, DisplayGround, inputDisplay);
+	input [3:0] m1, m10, h1, h10; // a four bit input from the clocks.
 	input ADC_CLK_10; 
 	input [1:0] SW;
 	output [4:0] DisplayGround;
 	output [6:0] inputDisplay;// display[0] is A display [1] is B ... display[6] is G
-	//went to 01 MHZ clock because wasnt very bright. 
+	//went to 10 MHZ clock because wasnt very bright. 
 //	assign Clock = ADC_CLK_10;
 	wire [3:0] fourbit, h1, h10, m1, m10;
 	wire [1:0] select;
