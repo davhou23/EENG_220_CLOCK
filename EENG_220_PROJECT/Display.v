@@ -1,11 +1,12 @@
-// This is a module to display on a 
-module Display (ADC_CLK_10, SW, m1, m10, h1, h10, DisplayGround, inputDisplay);
-	input [3:0] m1, m10, h1, h10; // a four bit input from the clocks.
+// This is a module to display on a Lucky Lite Model No. KW4-56NCWB-PY
+// Derek Elam 11/16/2020
+module Display (ADC_CLK_10, SW, minones, mintens, hourone, hourten, DisplayGround, inputDisplay);
+	input [3:0] minones, mintens, hourone, hourten; // a four bit input from the clocks.
 	input ADC_CLK_10; 
 	input [1:0] SW;
 	output [4:0] DisplayGround;
 	output [6:0] inputDisplay;// display[0] is A display [1] is B ... display[6] is G
-	//went to 10 MHZ clock because wasnt very bright. 
+	//went to 01 MHZ clock because wasnt very bright. 
 //	assign Clock = ADC_CLK_10;
 	wire [3:0] fourbit, h1, h10, m1, m10;
 	wire [1:0] select;
@@ -15,19 +16,18 @@ module Display (ADC_CLK_10, SW, m1, m10, h1, h10, DisplayGround, inputDisplay);
 	
 	//(Clock, Reset_n, enable, rollover); reset wasn't assigned to anything
 	
-	modulo_counter my_counter (.Clock(ADC_CLK_10), .Reset_n(reset), .enable(1'b1), .rollover(SlowClock));
-		defparam my_counter.n = 27;
-		defparam my_counter.k = 8000; //approx. 1200hz
+	SlowClock (.Clock(ADC_CLK_10), .Reset(reset), .enable(1'b1), .SlowClock(SlowClock));
+		//approx. 1200hz
 		//20 times slower - k value
 		//n is the size of register needed to hold k
 		
 	fourbit7seg D0(fourbit, inputDisplay);
 	
 	// testing will take out at the final part.
-    assign h10 = 4'b0001;
-    assign h1  = 4'b0011;
-    assign m10 = 4'b0011;
-    assign m1  = 4'b0111;
+	assign h10 = 4'b1000;
+   assign h1  = 4'b1000;
+   assign m10 = 4'b1000;
+   assign m1  = 4'b1000;
 	
 	shiftgroundsFSM FSM0(SlowClock, 1'b1, DisplayGround, h10, h1, m10, m1, fourbit); //select output port (2-bit vector)
 
@@ -69,11 +69,11 @@ module shiftgroundsFSM(Clk, reset, DisplayGround, h10, h1, m10, m1, fourbit);
 			// pin 10 - display 3 (tens min)
 			// pin 6  - display 4 (ones min)
 	localparam [2:0] state_display_init = 0,
-						 state_display0 = 1,
-						 state_display1 = 2,
-						 state_display2 = 3,
+						  state_display0 = 1,
+						  state_display1 = 2,
+						  state_display2 = 3,
 					     state_display3 = 4,
-						 state_display4 = 5;
+						  state_display4 = 5;
 	reg [2:0] statein;
 	
 	always @(posedge Clk) begin
@@ -135,24 +135,20 @@ module shiftgroundsFSM(Clk, reset, DisplayGround, h10, h1, m10, m1, fourbit);
 	end
 endmodule 
 
-module modulo_counter (Clock, Reset_n, enable, rollover);
-	parameter n = 4;
-	parameter k = 16;
-	
-	input 		Clock, Reset_n, enable;
-	output		rollover;
-	reg	[n-1:0] Q;
-	
-	always @ (posedge Clock or negedge Reset_n)
-		if (~Reset_n)
-			Q <= 'd0;
-		else if (enable)
-		begin
-			if (Q == k-1) /// 49,999,999
-				Q <= 'd0;
-			else
-				Q <= Q + 1'b1;
-		end
-				
-	assign rollover = (Q == k-1); // rollover is slow clock. _________-______	
+module SlowClock(Clock, Reset, enable, SlowClock);
+    input Clock, Reset, enable;
+    output reg SlowClock;
+    reg [13:0]counter;//size needed to hold 8000
+    always@(posedge Clock)begin
+        if (~Reset) begin
+            counter <= 0;
+            SlowClock <= 0;
+        end 
+        else begin
+            counter <= counter + 1;
+            if(counter <= 8000) //1250HZ
+                counter <= 0;
+                SlowClock <= SlowClock + 1;
+        end
+    end
 endmodule 
