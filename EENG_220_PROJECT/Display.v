@@ -1,9 +1,9 @@
 // This is a module to display on a Lucky Lite Model No. KW4-56NCWB-PY
 // Derek Elam 11/16/2020
-module Display (ADC_CLK_10, SW, minones, mintens, hourone, hourten, DisplayGround, inputDisplay);
-	input [3:0] minones, mintens, hourone, hourten; // a four bit input from the clocks.
-	input ADC_CLK_10; 
-	input [1:0] SW;
+module Display (ADC_CLK_10, m1, m10, h1, h10, DisplayGround, inputDisplay);
+	input [3:0] m1, m10, h1, h10; // a four bit input from the clocks.
+	input ADC_CLK_10;
+	// input [1:0] SW;
 	output [4:0] DisplayGround;
 	output [6:0] inputDisplay;// display[0] is A display [1] is B ... display[6] is G
 	//went to 01 MHZ clock because wasnt very bright. 
@@ -24,10 +24,6 @@ module Display (ADC_CLK_10, SW, minones, mintens, hourone, hourten, DisplayGroun
 	fourbit7seg D0(fourbit, inputDisplay);
 	
 	// testing will take out at the final part.
-	assign h10 = 4'b1000;
-   assign h1  = 4'b1000;
-   assign m10 = 4'b1000;
-   assign m1  = 4'b1000;
 	
 	shiftgroundsFSM FSM0(SlowClock, 1'b1, DisplayGround, h10, h1, m10, m1, fourbit); //select output port (2-bit vector)
 
