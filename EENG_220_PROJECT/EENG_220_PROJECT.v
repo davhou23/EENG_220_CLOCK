@@ -1,10 +1,11 @@
-module EENG_220_PROJECT(KEY0, KEY1, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, SW, LEDR, CLOCK_50, BUZZER);
+module EENG_220_PROJECT(KEY0, KEY1, inputDisplay, DisplayGrounnd  SW, LEDR, CLOCK_50, ADC_CLK_10 BUZZER);
 	input [9:0] SW;
-	input CLOCK_50, KEY0, KEY1;
+	input CLOCK_50, KEY0, KEY1, ADC_CLK_10;
 	
-	output [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5;
 	output [9:0] LEDR;
 	output BUZZER;
+    output [6:0] inputDisplay;
+    output [4:0] DisplayGround;
 	
 	wire [3:0] SEC_ONE, SEC_TEN, MIN_ONE, MIN_TEN, HOUR_ONE, HOUR_TEN, A_HOUR_ONE, A_HOUR_TEN, A_MIN_ONE, A_MIN_TEN, OUT_HOUR_ONE, OUT_HOUR_TEN, OUT_MIN_ONE, OUT_MIN_TEN, OUT_SEC_ONE, OUT_SEC_TEN;
 	wire [7:0] SET_IN;
@@ -46,14 +47,7 @@ module EENG_220_PROJECT(KEY0, KEY1, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, SW, LEDR
 	
 	
 	clock C1(CLOCK_50, SWITCH, SET_IN, SET, SET_TIME, SET_ALARM, HOUR_ONE, HOUR_TEN, MIN_ONE, MIN_TEN, SEC_ONE, SEC_TEN, A_MIN_ONE, A_MIN_TEN, A_HOUR_ONE, A_HOUR_TEN, ALARM_ON ,BUZZER);
-	
-	
-	//hex_display H0(SEC_ONE, HEX0);
-	//hex_display H1(SEC_TEN, HEX1);
-	//hex_display H2(MIN_ONE, HEX2);
-	//hex_display H3(MIN_TEN, HEX3);
-	//hex_display H4(HOUR_ONE, HEX4);
-	//hex_display H5(HOUR_TEN, HEX5);
+	Display alarmDisplay(ADC_CLK_10, MIN_ONE, MIN_TEN, HOUR_ONE, HOUR_TEN, DisplayGround, inputDisplay);
 	
 	assign OUT_SEC_ONE = (SET_ALARM) ? 8'b00000000 : SEC_ONE;
 	assign OUT_SEC_TEN = (SET_ALARM) ? 8'b00000000 : SEC_TEN;
@@ -61,15 +55,5 @@ module EENG_220_PROJECT(KEY0, KEY1, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, SW, LEDR
 	assign OUT_MIN_TEN = (SET_ALARM) ? A_MIN_TEN : MIN_TEN;
 	assign OUT_HOUR_ONE = (SET_ALARM) ? A_HOUR_ONE : HOUR_ONE;
 	assign OUT_HOUR_TEN = (SET_ALARM) ? A_HOUR_TEN : HOUR_TEN;
-	
-	
-	hex_display H6(OUT_SEC_ONE, HEX0);
-	hex_display H7(OUT_SEC_TEN, HEX1);
-	hex_display H8(OUT_MIN_ONE, HEX2);
-	hex_display H9(OUT_MIN_TEN, HEX3);
-	hex_display H10(OUT_HOUR_ONE, HEX4);
-	hex_display H11(OUT_HOUR_TEN, HEX5);
-	
-	
 	
 endmodule 
