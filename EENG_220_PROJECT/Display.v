@@ -1,8 +1,8 @@
 // This is a module to display on a Lucky Lite Model No. KW4-56NCWB-PY
 // Derek Elam 11/16/2020
-module Display (ADC_CLK_10, m1, m10, h1, h10, DisplayGround, inputDisplay);
+module Display (mhz10clock, m1, m10, h1, h10, DisplayGround, inputDisplay);
 	input [3:0] m1, m10, h1, h10; // a four bit input from the clocks.
-	input ADC_CLK_10;
+	input mhz10clock;
 	// input [1:0] SW;
 	output [4:0] DisplayGround;
 	output [6:0] inputDisplay;// display[0] is A display [1] is B ... display[6] is G
@@ -11,21 +11,19 @@ module Display (ADC_CLK_10, m1, m10, h1, h10, DisplayGround, inputDisplay);
 	wire [3:0] fourbit, h1, h10, m1, m10;
 	wire [1:0] select;
 //	reg [4:0] count;
-	wire SlowClock;
+	wire Slowclock;
 	assign reset = 1'b1;
 	
 	//(Clock, Reset_n, enable, rollover); reset wasn't assigned to anything
 	
-	SlowClock (.Clock(ADC_CLK_10), .Reset(reset), .enable(1'b1), .SlowClock(SlowClock));
-		//approx. 1200hz
-		//20 times slower - k value
-		//n is the size of register needed to hold k
+	SlowClock c1(.Clock(mhz10clock), .Reset(reset), .SlowClock(Slowclock));
+		defparam c1.k = 8000;//approx. 1200hz
 		
 	fourbit7seg D0(fourbit, inputDisplay);
 	
 	// testing will take out at the final part.
 	
-	shiftgroundsFSM FSM0(SlowClock, 1'b1, DisplayGround, h10, h1, m10, m1, fourbit); //select output port (2-bit vector)
+	shiftgroundsFSM FSM0(Slowclock, 1'b1, DisplayGround, h10, h1, m10, m1, fourbit); //select output port (2-bit vector)
 
 endmodule	
 
@@ -131,20 +129,24 @@ module shiftgroundsFSM(Clk, reset, DisplayGround, h10, h1, m10, m1, fourbit);
 	end
 endmodule 
 
-module SlowClock(Clock, Reset, enable, SlowClock);
-    input Clock, Reset, enable;
-    output reg SlowClock;
-    reg [13:0]counter;//size needed to hold 8000
+module SlowClock(Clock, Reset, SlowClock);
+    input Clock, Reset;
+    output SlowClock;
+    reg [27:0]counter;//size needed to hold 8000
+	 parameter k = 20; //how many times slower the clock is
     always@(posedge Clock)begin
         if (~Reset) begin
-            counter <= 0;
-            SlowClock <= 0;
+            counter <= 'd0;
         end 
         else begin
             counter <= counter + 1;
-            if(counter <= 8000) //1250HZ
-                counter <= 0;
-                SlowClock <= SlowClock + 1;
+            if(counter == k-1)begin //1250HZ
+               counter <= 'd0;
+				end
+				else begin
+               counter <= counter + 1'b1;	
+				end
         end
     end
+	 assign SlowClock = (counter == k-1);
 endmodule 
