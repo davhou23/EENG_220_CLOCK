@@ -1,14 +1,19 @@
-module clock(CLK, P, STOP, SWITCH, SW_IN, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_MIN_TEN, Q_SEC_ONE, Q_SEC_TEN);
-	input CLK, P, STOP, SWITCH;
+module clock(CLK, SWITCH, SW_IN, SET, TS_STATE, AS_STATE, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_MIN_TEN, Q_SEC_ONE, Q_SEC_TEN, QA_MIN_ONE, QA_MIN_TEN, QA_HOUR_ONE, QA_HOUR_TEN, A_ENABLE, B);
+	input CLK, SWITCH, A_ENABLE, AS_STATE, TS_STATE, SET;
 	input [7:0] SW_IN;
 	
-	output [3:0] Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_MIN_TEN, Q_SEC_ONE, Q_SEC_TEN;
+	output reg B;
+	output [3:0] Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_MIN_TEN, Q_SEC_ONE, Q_SEC_TEN, QA_MIN_ONE, QA_MIN_TEN, QA_HOUR_ONE, QA_HOUR_TEN;
 	reg [7:0] SEC = 8'b00000000;
 	reg [7:0] MIN = 8'b00000000;
 	reg [7:0] HOUR = 8'b00010010; 
-	reg [26:0] slow;
+	reg [7:0] A_HOUR = 8'b00000110, 
+				 A_MIN = 8'b00110000;
+	reg [26:0] slow, a_slow;
+	reg alarm_on, buzzer_on;
 	
 	always@(posedge CLK) begin
+	/*
 		if (~P)begin
 			if (SWITCH) begin
 				HOUR <= SW_IN;
@@ -17,7 +22,25 @@ module clock(CLK, P, STOP, SWITCH, SW_IN, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_M
 				MIN <= SW_IN;
 			end
 		end
-		if (STOP)begin
+		*/
+		if (~SET) begin
+			//If the set time state is on
+			if (TS_STATE)begin
+				if(SWITCH)
+					MIN <= SW_IN;
+				else
+					HOUR <= SW_IN;
+			end
+			//If the set alarm state is on
+			else if (AS_STATE) begin
+				if (SWITCH)
+					A_MIN <= SW_IN;
+				else
+					A_HOUR <= SW_IN;
+			end
+		end
+		
+		if (!(TS_STATE||AS_STATE))begin
 			slow <= slow + 1'b1;
 			if (slow == 49999999) begin
 				slow <= 0;
@@ -71,6 +94,35 @@ module clock(CLK, P, STOP, SWITCH, SW_IN, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_M
 				end
 			end
 		end
+		
+		//Is the alarm enabled?
+		if (A_ENABLE)begin
+			//Is the alarm at the desired time?
+			if (A_MIN == MIN && A_HOUR == HOUR)begin
+				alarm_on <= 1;
+			end
+		end
+		else begin
+			alarm_on <= 0;
+			buzzer_on <= 0;
+			B <= 0;
+		end
+		
+		//When the buzzer needs to be truned on
+		if (alarm_on)begin
+			a_slow <= a_slow + 1;
+			if (a_slow == 24999999)begin
+				if (buzzer_on)begin
+					B <= 1;
+					buzzer_on <= 0;
+				end
+				else begin
+					B <= 0;
+					buzzer_on <= 1;
+				end
+				a_slow <= 0;
+			end
+		end
 	end
 	
 	assign Q_HOUR_ONE = HOUR[3:0];
@@ -79,5 +131,9 @@ module clock(CLK, P, STOP, SWITCH, SW_IN, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_M
 	assign Q_MIN_TEN = MIN[7:4];
 	assign Q_SEC_ONE = SEC[3:0];
 	assign Q_SEC_TEN = SEC[7:4];
+	assign QA_HOUR_ONE = A_HOUR[3:0];
+	assign QA_HOUR_TEN = A_HOUR[7:4];
+	assign QA_MIN_ONE = A_MIN[3:0];
+	assign QA_MIN_TEN = A_MIN[7:4];
 	
 endmodule 
