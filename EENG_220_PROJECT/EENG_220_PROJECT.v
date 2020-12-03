@@ -1,11 +1,12 @@
-module EENG_220_PROJECT(KEY0, KEY1, inputDisplay, DisplayGround, SW, LEDR, CLOCK_50, ADC_CLK_10, BUZZER);
+module EENG_220_PROJECT(KEY0, KEY1, inputDisplay, DisplayGround, SW, LEDR, CLOCK_50, ADC_CLK_10, BUZZER, TestingPinAmperage);
 	input [9:0] SW;
 	input CLOCK_50, KEY0, KEY1, ADC_CLK_10;
 	
+	output TestingPinAmperage = 1'b1;
 	output [9:0] LEDR;
 	output BUZZER;
-   output [6:0] inputDisplay;
-   output [4:0] DisplayGround;
+    output [6:0] inputDisplay;
+    output [4:0] DisplayGround;
 	
 	wire [3:0] SEC_ONE, SEC_TEN, MIN_ONE, MIN_TEN, HOUR_ONE, HOUR_TEN, A_HOUR_ONE, A_HOUR_TEN, A_MIN_ONE, A_MIN_TEN, OUT_HOUR_ONE, OUT_HOUR_TEN, OUT_MIN_ONE, OUT_MIN_TEN, OUT_SEC_ONE, OUT_SEC_TEN;
 	wire [7:0] SET_IN;
@@ -57,4 +58,4 @@ module EENG_220_PROJECT(KEY0, KEY1, inputDisplay, DisplayGround, SW, LEDR, CLOCK
 	
 	Display alarmDisplay(ADC_CLK_10, OUT_MIN_ONE, OUT_MIN_TEN, OUT_HOUR_ONE, OUT_HOUR_TEN, DisplayGround, inputDisplay);
 	
-endmodule 
+endmodule  
