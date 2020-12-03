@@ -63,11 +63,11 @@ module shiftgroundsFSM(Clk, reset, DisplayGround, h10, h1, m10, m1, fourbit);
 			// pin 10 - display 3 (tens min)
 			// pin 6  - display 4 (ones min)
 	localparam [2:0] state_display_init = 0,
-						 state_display0 = 1,
-						 state_display1 = 2,
-						 state_display2 = 3,
+						  state_display0 = 1,
+						  state_display1 = 2,
+						  state_display2 = 3,
 					     state_display3 = 4,
-						 state_display4 = 5;
+						  state_display4 = 5;
 	reg [2:0] statein;
 	
 	always @(posedge Clk) begin
