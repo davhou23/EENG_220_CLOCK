@@ -12,6 +12,7 @@ module clock(CLK, SWITCH, SW_IN, SET, TS_STATE, AS_STATE, Q_HOUR_ONE, Q_HOUR_TEN
 	reg [26:0] slow, a_slow;
 	reg alarm_on, buzzer_on;
 	
+	
 	always@(posedge CLK) begin
 	/*
 		if (~P)begin
@@ -105,7 +106,7 @@ module clock(CLK, SWITCH, SW_IN, SET, TS_STATE, AS_STATE, Q_HOUR_ONE, Q_HOUR_TEN
 		else begin
 			alarm_on <= 0;
 			buzzer_on <= 0;
-			B <= 0;
+			B <= 1;
 		end
 		
 		//When the buzzer needs to be truned on
@@ -113,11 +114,11 @@ module clock(CLK, SWITCH, SW_IN, SET, TS_STATE, AS_STATE, Q_HOUR_ONE, Q_HOUR_TEN
 			a_slow <= a_slow + 1;
 			if (a_slow == 24999999)begin
 				if (buzzer_on)begin
-					B <= 1;
+					B <= 0;
 					buzzer_on <= 0;
 				end
 				else begin
-					B <= 0;
+					B <= 1;
 					buzzer_on <= 1;
 				end
 				a_slow <= 0;
