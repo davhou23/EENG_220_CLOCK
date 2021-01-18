@@ -1,29 +1,34 @@
+/*
+	Name: David Hout
+	Date: November 29
+	Class: EENG 220
+	Description: This module takes care of all the logic necesarry to get the 
+	clock to tick. Essentially what happens is that clock counts one every second. Every 
+	time the number reaches 60 seconds, it adds one to the minutes and displays it 
+	to the clock. The same thing happens for the minutes and hours portion of the clock. 
+*/
+
 module clock(CLK, SWITCH, SW_IN, SET, TS_STATE, AS_STATE, Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_MIN_TEN, Q_SEC_ONE, Q_SEC_TEN, QA_MIN_ONE, QA_MIN_TEN, QA_HOUR_ONE, QA_HOUR_TEN, A_ENABLE, B);
+	//Initialize all the input variables
 	input CLK, SWITCH, A_ENABLE, AS_STATE, TS_STATE, SET;
 	input [7:0] SW_IN;
 	
+	//Initialize all the output variables
 	output reg B;
 	output [3:0] Q_HOUR_ONE, Q_HOUR_TEN, Q_MIN_ONE, Q_MIN_TEN, Q_SEC_ONE, Q_SEC_TEN, QA_MIN_ONE, QA_MIN_TEN, QA_HOUR_ONE, QA_HOUR_TEN;
+
+	//Initialize all the register variables
 	reg [7:0] SEC = 8'b00000000;
 	reg [7:0] MIN = 8'b00000000;
 	reg [7:0] HOUR = 8'b00010010; 
 	reg [7:0] A_HOUR = 8'b00000110, 
-				 A_MIN = 8'b00110000;
+			  A_MIN = 8'b00110000;
 	reg [26:0] slow, a_slow;
 	reg alarm_on, buzzer_on;
 	
 	
 	always@(posedge CLK) begin
-	/*
-		if (~P)begin
-			if (SWITCH) begin
-				HOUR <= SW_IN;
-			end
-			else begin
-				MIN <= SW_IN;
-			end
-		end
-		*/
+		//If we are setting either the clock or the alarm time
 		if (~SET) begin
 			//If the set time state is on
 			if (TS_STATE)begin
@@ -41,8 +46,10 @@ module clock(CLK, SWITCH, SW_IN, SET, TS_STATE, AS_STATE, Q_HOUR_ONE, Q_HOUR_TEN
 			end
 		end
 		
+		//If we are not setting the clock or alarm time
 		if (!(TS_STATE||AS_STATE))begin
 			slow <= slow + 1'b1;
+			//Every time the 50Mhz clock has run for one second, take one step in the clock logic.
 			if (slow == 49999999) begin
 				slow <= 0;
 			end

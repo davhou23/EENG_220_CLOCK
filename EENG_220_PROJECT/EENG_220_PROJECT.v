@@ -1,3 +1,12 @@
+/*
+	Names: David Hout and Derek Elam
+	Dates: 
+	Started: Nov 11, 2020
+	Finished: Dec 2, 2020
+	Class: EENG 220
+	Description: Check README file.
+*/
+
 module EENG_220_PROJECT(KEY0, KEY1, inputDisplay, DisplayGround, SW, LEDR, CLOCK_50, ADC_CLK_10, BUZZER, TestingPinAmperage);
 	input [9:0] SW;
 	input CLOCK_50, KEY0, KEY1, ADC_CLK_10;
